@@ -1,2 +1,2 @@
-# siege
+# Siege
 Defend your castle from attackers!
