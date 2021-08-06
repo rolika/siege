@@ -1,5 +1,5 @@
 """Siege
-Siege is a game about a lonely hero who defends his castle from attackers by tossing barrels at them.
+Siege is a game about a lonely hero who defends his castle from attackers by throwing barrels at them.
 Code is loosely based on ClearCode's Space Invaders tutorial found here: https://www.youtube.com/watch?v=o-6pADy5Mdg
 """
 
