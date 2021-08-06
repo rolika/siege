@@ -18,6 +18,7 @@ class Player(sprite.Sprite):
         self._speed = 5
         self._left_boundary = 200
         self._right_boundary = 600
+        self._has_barrel = True
     
     def _get_input(self):
         keys = key.get_pressed()
@@ -27,17 +28,20 @@ class Player(sprite.Sprite):
         elif keys[K_LEFT]:
             self.rect.x -= self._speed
         
-        if keys[K_SPACE]:
+        if keys[K_SPACE] and self._has_barrel:
             self._toss_barrel()
     
-    def _constrain_movement(self):
+    def _constrain_movement(self):  # and pick up a new barrel
         if self.rect.left <= self._left_boundary:
             self.rect.left = self._left_boundary
+            self._has_barrel = True
         elif self.rect.right >= self._right_boundary:
             self.rect.right = self._right_boundary
+            self._has_barrel = True
     
     def _toss_barrel(self):
         print("barrel tossed")
+        self._has_barrel = False
     
     def update(self):
         self._get_input()
