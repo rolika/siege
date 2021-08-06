@@ -4,15 +4,18 @@ Code is loosely based on ClearCode's Space Invaders tutorial found here: https:/
 """
 
 
-import pygame, sys
+import pygame
+from pygame import sprite
+import sys
+from player import Player
 
 
 class Siege:
     def __init__(self):
-        pass
+        self._hero = sprite.GroupSingle(Player((400, 200)))
 
-    def run(self):
-        pass
+    def run(self, screen):
+        self._hero.draw(screen)
         # update all sprite groups
         # draw all sprite groups
 
@@ -31,8 +34,8 @@ if __name__ == "__main__":
                 pygame.quit()
                 sys.exit()
         
-        screen.fill((30, 30, 30))
-        game.run()
+        screen.fill((71, 93, 240))  # blue sky
+        game.run(screen)
 
         pygame.display.flip()
         clock.tick(60)
