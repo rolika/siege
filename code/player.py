@@ -68,3 +68,4 @@ class Player(sprite.Sprite):
         self._get_input()
         self._constrain_barrel_throw()  # this should be done before constraining the movement
         self._constrain_movement()
+        self._held_barrel.update(player_pos=self.rect.midtop)

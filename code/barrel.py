@@ -13,10 +13,10 @@ class Barrel(sprite.Sprite):
         self.image = Surface((40, 20))
         self.image.fill("brown")
         self.rect = self.image.get_rect(midbottom=pos)
-        self._held = True
     
     def update(self, *args, **kwargs) -> None:
-        if self._held:
-            pass  # move horizontally with the player
-        else:
-            pass  # move downwards
+        player_pos = kwargs.get("player_pos", None)
+        if player_pos:  # move along with the player
+            self.rect.midbottom = player_pos
+        else:  # barrel is thrown away, move down
+            pass
