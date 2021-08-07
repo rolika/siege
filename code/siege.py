@@ -8,26 +8,23 @@ import pygame
 from pygame import sprite
 import sys
 from player import Player
+from constant import SCREEN_SIZE, BLUE_SKY
 
 
 class Siege:
     def __init__(self):
-        self._hero = sprite.GroupSingle(Player((400, 200)))
+        self._hero = sprite.GroupSingle(Player())
 
     def run(self, screen):
         self._hero.update()
         self._hero.sprite.held_barrel.draw(screen)
         self._hero.sprite.thrown_barrels.draw(screen)
         self._hero.draw(screen)
-        # update all sprite groups
-        # draw all sprite groups
 
 
 if __name__ == "__main__":
     pygame.init()
-    screen_width = 800
-    screen_height = 600
-    screen = pygame.display.set_mode((screen_width, screen_height))
+    screen = pygame.display.set_mode(SCREEN_SIZE)
     clock = pygame.time.Clock()
     game = Siege()
 
@@ -37,7 +34,7 @@ if __name__ == "__main__":
                 pygame.quit()
                 sys.exit()
         
-        screen.fill((71, 93, 240))  # blue sky
+        screen.fill(BLUE_SKY)
         game.run(screen)
 
         pygame.display.flip()
