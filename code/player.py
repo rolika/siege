@@ -8,18 +8,15 @@
 from pygame import sprite, Surface, key  # this way, IntelliSense works in VS Code
 from pygame.locals import *
 from barrel import Barrel
+from constant import PLAYER_STEP, PLAYER_START_POS, LEFT_BOUNDARY, RIGHT_BOUNDARY
 
 
 class Player(sprite.Sprite):
-    def __init__(self, pos) -> None:
+    def __init__(self) -> None:
         super().__init__()
         self.image = Surface((20, 60))
         self.image.fill("white")
-        self.rect = self.image.get_rect(midbottom=pos)
-        self._step = 5
-
-        self._left_boundary = 200
-        self._right_boundary = 600
+        self.rect = self.image.get_rect(midbottom=PLAYER_START_POS)
 
         self._can_throw = True
         self._held_barrel = sprite.GroupSingle()
@@ -37,25 +34,25 @@ class Player(sprite.Sprite):
         keys = key.get_pressed()
 
         if keys[K_RIGHT]:
-            self.rect.x += self._step
+            self.rect.x += PLAYER_STEP
         elif keys[K_LEFT]:
-            self.rect.x -= self._step
+            self.rect.x -= PLAYER_STEP
         
         if keys[K_SPACE] and self._held_barrel.sprite and self._can_throw:
             self._throw_barrel()
     
     def _constrain_movement(self):  # and pick up a new barrel
-        if self.rect.left <= self._left_boundary:
-            self.rect.left = self._left_boundary
+        if self.rect.left <= LEFT_BOUNDARY:
+            self.rect.left = LEFT_BOUNDARY
             self._pick_up_barrel()
-        elif self.rect.right >= self._right_boundary:
-            self.rect.right = self._right_boundary
+        elif self.rect.right >= RIGHT_BOUNDARY:
+            self.rect.right = RIGHT_BOUNDARY
             self._pick_up_barrel()
     
     def _constrain_barrel_throw(self):
-        if self.rect.left > self._left_boundary + self._step:
+        if self.rect.left > LEFT_BOUNDARY + PLAYER_STEP:
             self._can_throw = True
-        elif self.rect.right < self._right_boundary - self._step:
+        elif self.rect.right < RIGHT_BOUNDARY - PLAYER_STEP:
             self._can_throw = True
     
     def _pick_up_barrel(self):
