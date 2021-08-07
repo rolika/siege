@@ -50,9 +50,7 @@ class Player(sprite.Sprite):
             self._pick_up_barrel()
     
     def _constrain_barrel_throw(self):
-        if self.rect.left > LEFT_BOUNDARY + PLAYER_STEP:
-            self._can_throw = True
-        elif self.rect.right < RIGHT_BOUNDARY - PLAYER_STEP:
+        if self.rect.left > LEFT_BOUNDARY + PLAYER_STEP and self.rect.right < RIGHT_BOUNDARY - PLAYER_STEP:
             self._can_throw = True
     
     def _pick_up_barrel(self):
