@@ -8,7 +8,7 @@
 from pygame import sprite, Surface, key  # this way, IntelliSense works in VS Code
 from pygame.locals import *
 from barrel import Barrel
-from constant import PLAYER_STEP, PLAYER_START_POS, LEFT_BOUNDARY, RIGHT_BOUNDARY
+from constant import PLAYER_STEP, PLAYER_START_POS, LEFT_TOWER, RIGHT_TOWER
 
 
 class Player(sprite.Sprite):
@@ -42,15 +42,15 @@ class Player(sprite.Sprite):
             self._throw_barrel()
     
     def _constrain_movement(self):  # and pick up a new barrel
-        if self.rect.left <= LEFT_BOUNDARY:
-            self.rect.left = LEFT_BOUNDARY
+        if self.rect.left <= LEFT_TOWER:
+            self.rect.left = LEFT_TOWER
             self._pick_up_barrel()
-        elif self.rect.right >= RIGHT_BOUNDARY:
-            self.rect.right = RIGHT_BOUNDARY
+        elif self.rect.right >= RIGHT_TOWER:
+            self.rect.right = RIGHT_TOWER
             self._pick_up_barrel()
     
     def _constrain_barrel_throw(self):
-        if self.rect.left > LEFT_BOUNDARY + PLAYER_STEP and self.rect.right < RIGHT_BOUNDARY - PLAYER_STEP:
+        if self.rect.left > LEFT_TOWER + PLAYER_STEP and self.rect.right < RIGHT_TOWER - PLAYER_STEP:
             self._can_throw = True
     
     def _pick_up_barrel(self):

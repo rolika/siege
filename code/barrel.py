@@ -6,7 +6,7 @@ If the barrel hits an enemy, the player gets scored. If the barrel hits he groun
 
 
 from pygame import sprite, Surface
-from constant import LOWER_BOUNDARY, BARREL_SPEED
+from constant import GROUND_LEVEL, BARREL_SPEED
 
 
 class Barrel(sprite.Sprite):
@@ -22,5 +22,5 @@ class Barrel(sprite.Sprite):
             self.rect.midbottom = player_pos
         else:  # barrel is thrown away, move down
             self.rect.y += BARREL_SPEED
-            if self.rect.y >= LOWER_BOUNDARY:
+            if self.rect.y >= GROUND_LEVEL:
                 self.kill()
