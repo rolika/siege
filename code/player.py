@@ -7,6 +7,7 @@
 
 from pygame import sprite, Surface, key  # this way, IntelliSense works in VS Code
 from pygame.locals import *
+from barrel import Barrel
 
 
 class Player(sprite.Sprite):
@@ -16,10 +17,18 @@ class Player(sprite.Sprite):
         self.image.fill("white")
         self.rect = self.image.get_rect(midbottom=pos)
         self._step = 5
+
         self._left_boundary = 200
         self._right_boundary = 600
+
         self._has_barrel = True
         self._can_throw = True
+        self._held_barrel = sprite.GroupSingle()
+        self._thrown_barrels = sprite.Group()
+    
+    @property
+    def held_barrel(self):
+        return self._held_barrel
     
     def _get_input(self):
         keys = key.get_pressed()
@@ -35,12 +44,10 @@ class Player(sprite.Sprite):
     def _constrain_movement(self):  # and pick up a new barrel
         if self.rect.left <= self._left_boundary:
             self.rect.left = self._left_boundary
-            self._has_barrel = True
-            self._can_throw = False
+            self._pick_up_barrel()
         elif self.rect.right >= self._right_boundary:
             self.rect.right = self._right_boundary
-            self._has_barrel = True
-            self._can_throw = False
+            self._pick_up_barrel()
     
     def _constrain_barrel_throw(self):
         if self.rect.left > self._left_boundary + self._step:
@@ -48,8 +55,13 @@ class Player(sprite.Sprite):
         elif self.rect.right < self._right_boundary - self._step:
             self._can_throw = True
     
+    def _pick_up_barrel(self):
+        self._held_barrel.add(Barrel(self.rect.midtop))
+        self._has_barrel = True
+        self._can_throw = False
+    
     def _throw_barrel(self):
-        print("barrel thrown")
+        print("throw barrel")
         self._has_barrel = False
     
     def update(self):

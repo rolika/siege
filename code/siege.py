@@ -1,5 +1,5 @@
-"""Siege
-Siege is a game about a lonely hero who defends his castle from attackers by throwing barrels at them.
+"""Siege!
+Siege! is a game about a lonely hero who defends his castle from attackers by throwing barrels at them.
 Code is loosely based on ClearCode's Space Invaders tutorial found here: https://www.youtube.com/watch?v=o-6pADy5Mdg
 """
 
@@ -16,6 +16,7 @@ class Siege:
 
     def run(self, screen):
         self._hero.update()
+        self._hero.sprite.held_barrel.draw(screen)
         self._hero.draw(screen)
         # update all sprite groups
         # draw all sprite groups
