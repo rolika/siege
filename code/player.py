@@ -21,7 +21,6 @@ class Player(sprite.Sprite):
         self._left_boundary = 200
         self._right_boundary = 600
 
-        self._has_barrel = True
         self._can_throw = True
         self._held_barrel = sprite.GroupSingle()
         self._thrown_barrels = sprite.Group()
@@ -38,7 +37,7 @@ class Player(sprite.Sprite):
         elif keys[K_LEFT]:
             self.rect.x -= self._step
         
-        if keys[K_SPACE] and self._has_barrel and self._can_throw:
+        if keys[K_SPACE] and self._held_barrel.sprite and self._can_throw:
             self._throw_barrel()
     
     def _constrain_movement(self):  # and pick up a new barrel
@@ -56,16 +55,18 @@ class Player(sprite.Sprite):
             self._can_throw = True
     
     def _pick_up_barrel(self):
-        self._held_barrel.add(Barrel(self.rect.midtop))
-        self._has_barrel = True
+        self._barrel = Barrel(self.rect.midtop)
+        self._held_barrel.add(self._barrel)
         self._can_throw = False
     
     def _throw_barrel(self):
         print("throw barrel")
-        self._has_barrel = False
+        self._held_barrel.empty()
+        self._thrown_barrels.add(self._barrel)
     
     def update(self):
         self._get_input()
         self._constrain_barrel_throw()  # this should be done before constraining the movement
         self._constrain_movement()
         self._held_barrel.update(player_pos=self.rect.midtop)
+        self._thrown_barrels.update()
