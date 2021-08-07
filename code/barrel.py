@@ -13,7 +13,9 @@ class Barrel(sprite.Sprite):
         self.image = Surface((40, 20))
         self.image.fill("brown")
         self.rect = self.image.get_rect(midbottom=pos)
+
         self._speed = 6
+        self._lower_boundary = 500
     
     def update(self, *args, **kwargs) -> None:
         player_pos = kwargs.get("player_pos", None)
@@ -21,3 +23,5 @@ class Barrel(sprite.Sprite):
             self.rect.midbottom = player_pos
         else:  # barrel is thrown away, move down
             self.rect.y += self._speed
+            if self.rect.y >= self._lower_boundary:
+                self.kill()

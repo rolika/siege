@@ -29,6 +29,10 @@ class Player(sprite.Sprite):
     def held_barrel(self):
         return self._held_barrel
     
+    @property
+    def thrown_barrels(self):
+        return self._thrown_barrels
+    
     def _get_input(self):
         keys = key.get_pressed()
 
@@ -60,7 +64,6 @@ class Player(sprite.Sprite):
         self._can_throw = False
     
     def _throw_barrel(self):
-        print("throw barrel")
         self._held_barrel.empty()
         self._thrown_barrels.add(self._barrel)
     

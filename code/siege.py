@@ -17,6 +17,7 @@ class Siege:
     def run(self, screen):
         self._hero.update()
         self._hero.sprite.held_barrel.draw(screen)
+        self._hero.sprite.thrown_barrels.draw(screen)
         self._hero.draw(screen)
         # update all sprite groups
         # draw all sprite groups
