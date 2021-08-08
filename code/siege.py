@@ -8,18 +8,26 @@ import pygame
 from pygame import sprite
 import sys
 from player import Player
+from scenery import *
 from constant import SCREEN_SIZE, BLUE_SKY
 
 
 class Siege:
     def __init__(self):
         self._hero = sprite.GroupSingle(Player())
+        left_tower = LeftTower()
+        right_tower = RightTower()
+        self._scenery = sprite.Group(Field(), Bastion(), left_tower, right_tower, Roof(left_tower.rect.midtop), Roof(right_tower.rect.midtop), Road())
 
     def run(self, screen):
+        # update sprites
         self._hero.update()
+
+        # draw sprites
+        self._scenery.draw(screen)
+        self._hero.draw(screen)
         self._hero.sprite.held_barrel.draw(screen)
         self._hero.sprite.thrown_barrels.draw(screen)
-        self._hero.draw(screen)
 
 
 if __name__ == "__main__":
