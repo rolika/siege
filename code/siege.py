@@ -9,6 +9,8 @@ from pygame import sprite
 import sys
 from player import Player
 from scenery import *
+from enemy import Enemy
+from ladder import Ladders
 from constant import SCREEN_SIZE, BLUE_SKY
 
 
@@ -18,16 +20,21 @@ class Siege:
         left_tower = LeftTower()
         right_tower = RightTower()
         self._scenery = sprite.Group(Field(), Bastion(), left_tower, right_tower, Roof(left_tower.rect.midtop), Roof(right_tower.rect.midtop), Road())
+        self._enemies = sprite.Group(Enemy())
+        self._ladders = Ladders()
 
     def run(self, screen):
         # update sprites
         self._hero.update()
-
+        self._enemies.update()
+        
         # draw sprites
         self._scenery.draw(screen)
         self._hero.draw(screen)
         self._hero.sprite.held_barrel.draw(screen)
         self._hero.sprite.thrown_barrels.draw(screen)
+        self._ladders.draw(screen)
+        self._enemies.draw(screen)
 
 
 if __name__ == "__main__":
