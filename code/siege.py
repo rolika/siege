@@ -8,18 +8,25 @@ import pygame
 from pygame import sprite
 import sys
 from player import Player
+from enemy import Enemy
 from constant import SCREEN_SIZE, BLUE_SKY
 
 
 class Siege:
     def __init__(self):
         self._hero = sprite.GroupSingle(Player())
+        self._enemies = sprite.Group(Enemy())
 
     def run(self, screen):
+        # update sprites
         self._hero.update()
+        self._enemies.update()
+
+        # draw sprites
         self._hero.sprite.held_barrel.draw(screen)
         self._hero.sprite.thrown_barrels.draw(screen)
         self._hero.draw(screen)
+        self._enemies.draw(screen)
 
 
 if __name__ == "__main__":
