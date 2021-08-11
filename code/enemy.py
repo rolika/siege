@@ -5,10 +5,19 @@ The attacker chooses the nearest ladder with the least other attackers already o
 
 from pygame import sprite, Surface
 import random
-from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_SCORE, ENEMY_SPAWN_INTERVAL, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCREEN_WIDTH
+from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_SCORE, ENEMY_SPAWN_DECREMENT, ENEMY_SPAWN_INTERVAL, ENEMY_SPEED_INCREMENT, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCORE_LIMIT_1, SCORE_LIMIT_2, SCORE_LIMIT_3, SCREEN_WIDTH
 
 
 class Enemy(sprite.Sprite):
+
+    # class variables & methods
+    walking_speed = ENEMY_WALKING_SPEED
+    climbing_speed = ENEMY_CLIMBING_SPEED
+    
+    def increase_speed():
+        Enemy.walking_speed += ENEMY_SPEED_INCREMENT
+        Enemy.climbing_speed -= ENEMY_SPEED_INCREMENT
+
     def __init__(self, ladder) -> None:
         super().__init__()
         random.seed()
@@ -34,10 +43,10 @@ class Enemy(sprite.Sprite):
         direction = random.choice((-1, 1))  # -1: right side, 1: left side
         side = SCREEN_WIDTH if direction == -1 else 0
         self.rect = self.image.get_rect(midbottom=(side, GROUND_LEVEL))
-        self._speed = (ENEMY_WALKING_SPEED*direction, 0)
+        self._speed = (Enemy.walking_speed*direction, 0)
 
     def _climb(self):
-        self._speed = (0, ENEMY_CLIMBING_SPEED)
+        self._speed = (0, Enemy.climbing_speed)
     
     def fall(self):
         self._speed = (0, ENEMY_FALLING_SPEED)
@@ -56,11 +65,20 @@ class Enemy(sprite.Sprite):
 
 
 class Enemies(sprite.Group):
+
+    # class variables & methods
+    spawn_interval = ENEMY_SPAWN_INTERVAL
+    
+    def decrement_spawn_interval():
+        Enemies.spawn_interval[0] -= ENEMY_SPAWN_DECREMENT
+        Enemies.spawn_interval[1] -= ENEMY_SPAWN_DECREMENT
+    
     def __init__(self, ladders) -> None:
         super().__init__()
         self._ladders = tuple(ladders)
         self._spawn_interval = 0
         self._score = 0
+        self._level = 1
     
     @property
     def conquer(self):
@@ -71,7 +89,7 @@ class Enemies(sprite.Group):
         return self._score
 
     def _reset_timer(self):
-        self._spawn_interval = random.randint(*ENEMY_SPAWN_INTERVAL)
+        self._spawn_interval = random.randint(*Enemies.spawn_interval)
 
     def _ladder(self):
         return random.choice(self._ladders)
@@ -91,8 +109,21 @@ class Enemies(sprite.Group):
                         self._score += ENEMY_SCORE  # bonus for hitting an enemy on ground level
                     barrel.hit()
                     enemy.fall()
+    
+    def _challenge(self):
+        if self._score >= SCORE_LIMIT_1 and self._level == 1:
+            #Enemy.increase_speed()
+            self._level += 1
+        elif self._score >= SCORE_LIMIT_2 and self._level == 2:
+            Enemies.decrement_spawn_interval()
+            self._level += 1
+        elif self._score >= SCORE_LIMIT_3 and self._level == 3:
+            self._level += 1
+            #Enemy.increase_speed()
+            Enemies.decrement_spawn_interval()
 
     def update(self, barrels):
         self._check_barrels(barrels)
+        self._challenge()
         self._spawn()
         super().update()
