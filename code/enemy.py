@@ -5,7 +5,7 @@ The attacker chooses the nearest ladder with the least other attackers already o
 
 from pygame import sprite, Surface
 import random
-from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_SCORE, ENEMY_SPAWN_DECREMENT, ENEMY_SPAWN_INTERVAL, ENEMY_SPEED_INCREMENT, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCORE_LIMIT_1, SCORE_LIMIT_2, SCORE_LIMIT_3, SCREEN_WIDTH
+from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_SCORE, ENEMY_SPAWN_DECREMENT, ENEMY_SPAWN_INTERVAL, ENEMY_SPEED_INCREMENT, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCORE_LIMIT, SCREEN_WIDTH
 
 
 class Enemy(sprite.Sprite):
@@ -78,6 +78,7 @@ class Enemies(sprite.Group):
         self._ladders = tuple(ladders)
         self._spawn_interval = 0
         self._score = 0
+        self._level_limit = SCORE_LIMIT
         self._level = 1
     
     @property
@@ -111,16 +112,10 @@ class Enemies(sprite.Group):
                     enemy.fall()
     
     def _challenge(self):
-        if self._score >= SCORE_LIMIT_1 and self._level == 1:
-            #Enemy.increase_speed()
-            self._level += 1
-        elif self._score >= SCORE_LIMIT_2 and self._level == 2:
+        if self._score >= self._level_limit and self._level == self._level_limit / SCORE_LIMIT:
             Enemies.decrement_spawn_interval()
             self._level += 1
-        elif self._score >= SCORE_LIMIT_3 and self._level == 3:
-            self._level += 1
-            #Enemy.increase_speed()
-            Enemies.decrement_spawn_interval()
+            self._level_limit += SCORE_LIMIT
 
     def update(self, barrels):
         self._check_barrels(barrels)
