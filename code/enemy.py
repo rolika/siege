@@ -5,7 +5,7 @@ The attacker chooses the nearest ladder with the least other attackers already o
 
 from pygame import sprite, Surface
 import random
-from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_SPAWN_INTERVAL, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCREEN_WIDTH
+from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_SCORE, ENEMY_SPAWN_INTERVAL, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCREEN_WIDTH
 
 
 class Enemy(sprite.Sprite):
@@ -21,6 +21,14 @@ class Enemy(sprite.Sprite):
     @property
     def is_above_bastion(self):
         return self.rect.centery < BASTION_LEVEL
+    
+    @property
+    def is_on_ground(self):
+        return self.rect.bottom == GROUND_LEVEL
+    
+    @property
+    def falling(self):
+        return self._falling
 
     def _spawn(self):
         direction = random.choice((-1, 1))  # -1: right side, 1: left side
@@ -52,10 +60,15 @@ class Enemies(sprite.Group):
         super().__init__()
         self._ladders = tuple(ladders)
         self._spawn_interval = 0
+        self._score = 0
     
     @property
     def conquer(self):
         return any([enemy.is_above_bastion for enemy in self.sprites()])
+    
+    @property
+    def score(self):
+        return self._score
 
     def _reset_timer(self):
         self._spawn_interval = random.randint(*ENEMY_SPAWN_INTERVAL)
@@ -70,9 +83,14 @@ class Enemies(sprite.Group):
             self._reset_timer()
     
     def _check_barrels(self, barrels):
-        for enemies in sprite.groupcollide(barrels, self, False, False).values():
+        for barrel, enemies in sprite.groupcollide(barrels, self, False, False).items():
             for enemy in enemies:
-                enemy.fall()
+                if not enemy.falling:
+                    self._score += ENEMY_SCORE + barrel.bonus
+                    if enemy.is_on_ground:
+                        self._score += ENEMY_SCORE  # bonus for hitting an enemy on ground level
+                    barrel.hit()
+                    enemy.fall()
 
     def update(self, barrels):
         self._check_barrels(barrels)

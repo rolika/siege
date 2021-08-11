@@ -6,7 +6,7 @@ If the barrel hits an enemy, the player gets scored. If the barrel hits he groun
 
 
 from pygame import sprite, Surface
-from constant import GROUND_LEVEL, BARREL_SPEED
+from constant import BARREL_BONUS, GROUND_LEVEL, BARREL_SPEED
 
 
 class Barrel(sprite.Sprite):
@@ -15,6 +15,14 @@ class Barrel(sprite.Sprite):
         self.image = Surface((40, 20))
         self.image.fill("brown")
         self.rect = self.image.get_rect(midbottom=pos)
+        self._hit = 0
+    
+    @property
+    def bonus(self):
+        return self._hit * BARREL_BONUS
+    
+    def hit(self):
+        self._hit += 1
     
     def update(self, *args, **kwargs) -> None:
         player_pos = kwargs.get("player_pos", None)
