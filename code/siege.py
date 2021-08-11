@@ -4,12 +4,13 @@ Code is loosely based on ClearCode's Space Invaders tutorial found here: https:/
 """
 
 
+from random import random
 import pygame
 from pygame import sprite
 import sys
 from player import Player
-from scenery import *
-from enemy import Enemy
+from scenery import Field, Bastion, Roof, LeftTower, RightTower, Road
+from enemy import Enemies
 from ladder import Ladders
 from constant import SCREEN_SIZE, BLUE_SKY
 
@@ -20,7 +21,7 @@ class Siege:
         right_tower = RightTower()
         self._scenery = sprite.Group(Field(), Bastion(), left_tower, right_tower, Roof(left_tower.rect.midtop), Roof(right_tower.rect.midtop), Road())
         self._ladders = Ladders()
-        self._enemies = sprite.Group(Enemy(self._ladders))
+        self._enemies = Enemies(self._ladders)
         self._hero = sprite.GroupSingle(Player())
 
     def run(self, screen):
