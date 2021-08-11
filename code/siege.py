@@ -26,7 +26,7 @@ class Siege:
     def run(self, screen):
         # update sprites
         self._hero.update()
-        self._enemies.update()
+        self._enemies.update(self._hero.sprite.thrown_barrels)
 
         if self._enemies.conquer:
             pygame.quit()
