@@ -8,7 +8,7 @@
 from pygame import sprite, Surface, key  # this way, IntelliSense works in VS Code
 from pygame.locals import *
 from barrel import Barrel
-from constant import PLAYER_STEP, PLAYER_START_POS, LEFT_TOWER, RIGHT_TOWER
+from constant import PLAYER_STEP, PLAYER_START_POS, LEFT_TOWER, PLAYER_STEP_HOLDING_BARREL, RIGHT_TOWER
 
 
 class Player(sprite.Sprite):
@@ -34,10 +34,9 @@ class Player(sprite.Sprite):
         keys = key.get_pressed()
 
         if keys[K_RIGHT]:
-            self.rect.x += PLAYER_STEP
+            self.rect.x += PLAYER_STEP_HOLDING_BARREL if self._held_barrel.sprite else PLAYER_STEP
         elif keys[K_LEFT]:
-            self.rect.x -= PLAYER_STEP
-        
+            self.rect.x -= PLAYER_STEP_HOLDING_BARREL if self._held_barrel.sprite else PLAYER_STEP
         if keys[K_SPACE] and self._held_barrel.sprite and self._can_throw:
             self._throw_barrel()
     

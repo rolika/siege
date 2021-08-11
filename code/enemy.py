@@ -5,7 +5,7 @@ The attacker chooses the nearest ladder with the least other attackers already o
 
 from pygame import sprite, Surface
 import random
-from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_SPAWN_INTERVAL, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCREEN_WIDTH
+from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_SPAWN_INTERVAL, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCREEN_WIDTH
 
 
 class Enemy(sprite.Sprite):
@@ -15,6 +15,7 @@ class Enemy(sprite.Sprite):
         self.image = Surface((20, 50))
         self.image.fill(random.choice(("red", "green", "blue", "orange")))
         self._ladder = ladder
+        self._falling = False
         self._spawn()
     
     @property
@@ -29,15 +30,21 @@ class Enemy(sprite.Sprite):
 
     def _climb(self):
         self._speed = (0, ENEMY_CLIMBING_SPEED)
+    
+    def fall(self):
+        self._speed = (0, ENEMY_FALLING_SPEED)
+        self._falling = True
 
     def _check_ladder(self):
-        return self._ladder.rect.contains(self.rect)
+        return not self._falling and self._ladder.rect.contains(self.rect)
 
     def update(self, *args, **kwargs) -> None:
         self.rect.x += self._speed[0]
         self.rect.y += self._speed[1]
         if self._check_ladder():
             self._climb()
+        if self.rect.y >= GROUND_LEVEL:
+            self.kill()
 
 
 class Enemies(sprite.Group):
@@ -55,10 +62,19 @@ class Enemies(sprite.Group):
 
     def _ladder(self):
         return random.choice(self._ladders)
-
-    def update(self):
+    
+    def _spawn(self):
         self._spawn_interval -= 1
         if self._spawn_interval <= 0:
             self.add(Enemy(self._ladder()))
             self._reset_timer()
+    
+    def _check_barrels(self, barrels):
+        for enemies in sprite.groupcollide(barrels, self, False, False).values():
+            for enemy in enemies:
+                enemy.fall()
+
+    def update(self, barrels):
+        self._check_barrels(barrels)
+        self._spawn()
         super().update()
