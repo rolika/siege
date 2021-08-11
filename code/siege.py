@@ -28,6 +28,10 @@ class Siege:
         # update sprites
         self._hero.update()
         self._enemies.update()
+
+        if self._enemies.conquer:
+            pygame.quit()
+            sys.exit("Your castle has been conquered!")
         
         # draw sprites
         self._scenery.draw(screen)

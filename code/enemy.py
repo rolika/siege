@@ -5,7 +5,7 @@ The attacker chooses the nearest ladder with the least other attackers already o
 
 from pygame import sprite, Surface
 import random
-from constant import ENEMY_CLIMBING_SPEED, ENEMY_SPAWN_INTERVAL, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCREEN_WIDTH
+from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_SPAWN_INTERVAL, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCREEN_WIDTH
 
 
 class Enemy(sprite.Sprite):
@@ -16,6 +16,10 @@ class Enemy(sprite.Sprite):
         self.image.fill(random.choice(("red", "green", "blue", "orange")))
         self._ladder = ladder
         self._spawn()
+    
+    @property
+    def is_above_bastion(self):
+        return self.rect.centery < BASTION_LEVEL
 
     def _spawn(self):
         direction = random.choice((-1, 1))  # -1: right side, 1: left side
@@ -41,6 +45,10 @@ class Enemies(sprite.Group):
         super().__init__()
         self._ladders = tuple(ladders)
         self._spawn_interval = 0
+    
+    @property
+    def conquer(self):
+        return any([enemy.is_above_bastion for enemy in self.sprites()])
 
     def _reset_timer(self):
         self._spawn_interval = random.randint(*ENEMY_SPAWN_INTERVAL)
