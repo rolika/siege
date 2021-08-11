@@ -4,6 +4,7 @@ Code is loosely based on ClearCode's Space Invaders tutorial found here: https:/
 """
 
 
+from text import HiScore, Score, Text
 import pygame
 from pygame import sprite
 import sys
@@ -11,7 +12,7 @@ from player import Player
 from scenery import Sky, Field, Bastion, Roof, LeftTower, RightTower, Road
 from enemy import Enemies
 from ladder import Ladders
-from constant import SCREEN_SIZE, BLUE_SKY
+from constant import SCREEN_SIZE, BLUE_SKY, SCREEN_WIDTH
 
 
 class Siege:
@@ -22,11 +23,13 @@ class Siege:
         self._ladders = Ladders()
         self._enemies = Enemies(self._ladders)
         self._hero = sprite.GroupSingle(Player())
+        self._text = sprite.Group(Text("Siege!", "font/RubikMonoOne-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH//2, 0)), Score("font/Monofett-Regular.ttf", 24, "darkslategrey", (0, 0)), HiScore("font/Monofett-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH, 0)))
 
     def run(self, screen):
         # update sprites
         self._hero.update()
         self._enemies.update(self._hero.sprite.thrown_barrels)
+        self._text.update()
 
         if self._enemies.conquer:
             pygame.quit()
@@ -39,6 +42,7 @@ class Siege:
         self._ladders.draw(screen)
         self._enemies.draw(screen)
         self._hero.sprite.thrown_barrels.draw(screen)
+        self._text.draw(screen)
 
 
 if __name__ == "__main__":
