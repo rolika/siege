@@ -23,6 +23,10 @@ class Enemy(sprite.Sprite):
         return self.rect.centery < BASTION_LEVEL
     
     @property
+    def is_on_ground(self):
+        return self.rect.bottom == GROUND_LEVEL
+    
+    @property
     def falling(self):
         return self._falling
 
@@ -83,6 +87,8 @@ class Enemies(sprite.Group):
             for enemy in enemies:
                 if not enemy.falling:
                     self._score += ENEMY_SCORE + barrel.bonus
+                    if enemy.is_on_ground:
+                        self._score += ENEMY_SCORE  # bonus for hitting an enemy on ground level
                     barrel.hit()
                     enemy.fall()
 
