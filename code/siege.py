@@ -23,13 +23,16 @@ class Siege:
         self._ladders = Ladders()
         self._enemies = Enemies(self._ladders)
         self._hero = sprite.GroupSingle(Player())
-        self._text = sprite.Group(Text("Siege!", "font/RubikMonoOne-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH//2, 0)), Score("font/Monofett-Regular.ttf", 24, "darkslategrey", (0, 0)), HiScore("font/Monofett-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH, 0)))
+        self._title = sprite.GroupSingle(Text("Siege!", "font/RubikMonoOne-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH//2, 0)))
+        self._score = sprite.GroupSingle(Score("font/Monofett-Regular.ttf", 24, "darkslategrey", (0, 0)))
+        self._hiscore = sprite.GroupSingle(HiScore("font/Monofett-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH, 0)))
 
     def run(self, screen):
         # update sprites
         self._hero.update()
         self._enemies.update(self._hero.sprite.thrown_barrels)
-        self._text.update()
+        self._score.update(self._enemies.score)
+        self._hiscore.update()
 
         if self._enemies.conquer:
             pygame.quit()
@@ -42,7 +45,9 @@ class Siege:
         self._ladders.draw(screen)
         self._enemies.draw(screen)
         self._hero.sprite.thrown_barrels.draw(screen)
-        self._text.draw(screen)
+        self._title.draw(screen)
+        self._score.draw(screen)
+        self._hiscore.draw(screen)
 
 
 if __name__ == "__main__":
