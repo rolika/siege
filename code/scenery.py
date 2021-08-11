@@ -1,8 +1,16 @@
 """Scenery sprites are visual background items which do not interact with the player."""
 
 
-from constant import BASTION_HEIGHT, BASTION_WIDTH, GROUND_LEVEL, LEFT_TOWER, RIGHT_TOWER, ROAD_HEIGHT, ROOF_HEIGHT, ROOF_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, TOWER_HEIGHT, TOWER_WIDTH
+from constant import BASTION_HEIGHT, BASTION_WIDTH, BLUE_SKY, GROUND_LEVEL, LEFT_TOWER, RIGHT_TOWER, ROAD_HEIGHT, ROOF_HEIGHT, ROOF_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, TOWER_HEIGHT, TOWER_WIDTH
 from pygame import sprite, Surface
+
+
+class Sky(sprite.Sprite):
+    def __init__(self) -> None:
+        super().__init__()
+        self.image = Surface((SCREEN_WIDTH, SCREEN_HEIGHT//2))
+        self.image.fill(BLUE_SKY)
+        self.rect = self.image.get_rect(topleft=(0, 0))
 
 
 class Field(sprite.Sprite):
