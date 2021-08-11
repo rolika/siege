@@ -79,10 +79,11 @@ class Enemies(sprite.Group):
             self._reset_timer()
     
     def _check_barrels(self, barrels):
-        for enemies in sprite.groupcollide(barrels, self, False, False).values():
+        for barrel, enemies in sprite.groupcollide(barrels, self, False, False).items():
             for enemy in enemies:
                 if not enemy.falling:
-                    self._score += ENEMY_SCORE
+                    self._score += ENEMY_SCORE + barrel.bonus
+                    barrel.hit()
                     enemy.fall()
 
     def update(self, barrels):
