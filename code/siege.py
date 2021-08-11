@@ -4,7 +4,6 @@ Code is loosely based on ClearCode's Space Invaders tutorial found here: https:/
 """
 
 
-from random import random
 import pygame
 from pygame import sprite
 import sys
