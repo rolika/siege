@@ -5,17 +5,21 @@ The attacker chooses the nearest ladder with the least other attackers already o
 
 from pygame import sprite, Surface
 import random
-from constant import ENEMY_CLIMBING_SPEED, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCREEN_WIDTH
+from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_SPAWN_INTERVAL, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCREEN_WIDTH
 
 
 class Enemy(sprite.Sprite):
-    def __init__(self, ladder=1) -> None:
+    def __init__(self, ladder) -> None:
         super().__init__()
         random.seed()
         self.image = Surface((20, 50))
-        self.image.fill("red")
-        self._spawn()
+        self.image.fill(random.choice(("red", "green", "blue", "orange")))
         self._ladder = ladder
+        self._spawn()
+    
+    @property
+    def is_above_bastion(self):
+        return self.rect.centery < BASTION_LEVEL
 
     def _spawn(self):
         direction = random.choice((-1, 1))  # -1: right side, 1: left side
@@ -25,12 +29,36 @@ class Enemy(sprite.Sprite):
 
     def _climb(self):
         self._speed = (0, ENEMY_CLIMBING_SPEED)
-    
+
     def _check_ladder(self):
-        return self.rect.centerx == 400
-    
+        return self._ladder.rect.contains(self.rect)
+
     def update(self, *args, **kwargs) -> None:
         self.rect.x += self._speed[0]
         self.rect.y += self._speed[1]
         if self._check_ladder():
             self._climb()
+
+
+class Enemies(sprite.Group):
+    def __init__(self, ladders) -> None:
+        super().__init__()
+        self._ladders = tuple(ladders)
+        self._spawn_interval = 0
+    
+    @property
+    def conquer(self):
+        return any([enemy.is_above_bastion for enemy in self.sprites()])
+
+    def _reset_timer(self):
+        self._spawn_interval = random.randint(*ENEMY_SPAWN_INTERVAL)
+
+    def _ladder(self):
+        return random.choice(self._ladders)
+
+    def update(self):
+        self._spawn_interval -= 1
+        if self._spawn_interval <= 0:
+            self.add(Enemy(self._ladder()))
+            self._reset_timer()
+        super().update()

@@ -49,5 +49,5 @@ class Road(sprite.Sprite):
     def __init__(self) -> None:
         super().__init__()
         self.image = Surface((SCREEN_WIDTH, ROAD_HEIGHT))
-        self.image.fill("beige")
+        self.image.fill("sandybrown")
         self.rect = self.image.get_rect(topleft=(0, GROUND_LEVEL))
