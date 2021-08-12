@@ -5,7 +5,8 @@ Code is loosely based on ClearCode's Space Invaders tutorial found here: https:/
 
 
 import pygame
-from pygame import sprite
+from pygame import sprite, key
+from pygame.locals import *
 import sys
 import shelve
 from player import Player
@@ -29,7 +30,7 @@ class Siege:
         self._score = sprite.GroupSingle(Score("font/Monofett-Regular.ttf", 24, "darkslategrey", (0, 0)))
         self._hiscore = sprite.GroupSingle(HiScore("font/Monofett-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH, 0)))
         self._game_over = sprite.GroupSingle(Text("Game Over", "font/RubikMonoOne-Regular.ttf", 40, "darkslategrey", (SCREEN_WIDTH//2, GROUND_LEVEL - BASTION_HEIGHT//2)))
-        self._press_space = sprite.GroupSingle(Text("Press space to play!", "font/RubikMonoOne-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH//2, GROUND_LEVEL+10)))
+        self._press_space = sprite.GroupSingle(Text("Press space!", "font/RubikMonoOne-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH//2, GROUND_LEVEL+10)))
     
     def _restore_hiscore(self):
         with shelve.open(HISCORE_FILENAME) as hs:
@@ -53,7 +54,15 @@ class Siege:
         self._hero.sprite.thrown_barrels.draw(screen)
     
     def title(self, screen):
-        return State.TITLE
+        self._enemies.reset()
+        self._hero.sprite.reset()
+        keys = key.get_pressed()
+        if keys[K_SPACE]:
+            return State.RUN
+        else:
+            self._draw_general_sprites(screen)
+            self._press_space.draw(screen)
+            return State.TITLE
 
     def run(self, screen):
         # update sprites
@@ -75,9 +84,14 @@ class Siege:
         return State.RUN
     
     def over(self, screen):
-        self._draw_general_sprites(screen)
-        self._game_over.draw(screen)
-        return State.OVER
+        keys = key.get_pressed()
+        if keys[K_SPACE]:
+            return State.TITLE
+        else:
+            self._draw_general_sprites(screen)
+            self._game_over.draw(screen)
+            self._press_space.draw(screen)
+            return State.OVER
 
 
 if __name__ == "__main__":
@@ -85,7 +99,7 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode(SCREEN_SIZE)
     clock = pygame.time.Clock()
     game = Siege()
-    state = State.RUN
+    state = State.TITLE
 
     while True:
         for event in pygame.event.get():
@@ -96,7 +110,7 @@ if __name__ == "__main__":
         screen.fill(BLUE_SKY)
 
         if state == State.TITLE:
-            state == game.title(screen)
+            state = game.title(screen)
 
         if state == State.RUN:
             state = game.run(screen)

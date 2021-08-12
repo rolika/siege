@@ -16,7 +16,7 @@ class Player(sprite.Sprite):
         super().__init__()
         self.image = Surface((20, 60))
         self.image.fill("white")
-        self.rect = self.image.get_rect(midbottom=PLAYER_START_POS)
+        self.reset()
 
         self._can_throw = True
         self._held_barrel = sprite.GroupSingle()
@@ -60,6 +60,9 @@ class Player(sprite.Sprite):
     def _throw_barrel(self):
         self._held_barrel.empty()
         self._thrown_barrels.add(self._barrel)
+    
+    def reset(self):
+        self.rect = self.image.get_rect(midbottom=PLAYER_START_POS)
     
     def update(self):
         self._get_input()
