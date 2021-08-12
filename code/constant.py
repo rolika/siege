@@ -1,5 +1,8 @@
 """Constants gathered in one place"""
 
+
+import enum
+
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -42,3 +45,8 @@ SPACE_BETWEEN_LADDERS = BASTION_WIDTH // LADDERS
 FIRST_LADDER_LEFT_POS = LEFT_TOWER + SPACE_BETWEEN_LADDERS // 2
 
 HISCORE_FILENAME = "hiscore"
+
+class State(enum.Enum):
+    TITLE = enum.auto()
+    RUN = enum.auto()
+    OVER = enum.auto()
