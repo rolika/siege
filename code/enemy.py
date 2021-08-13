@@ -116,6 +116,10 @@ class Enemies(sprite.Group):
             Enemies.decrement_spawn_interval()
             self._level += 1
             self._level_limit += SCORE_LIMIT
+    
+    def reset(self):
+        self._score = 0
+        self.empty()
 
     def update(self, barrels):
         self._check_barrels(barrels)
