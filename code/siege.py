@@ -56,13 +56,9 @@ class Siege:
     def title(self, screen):
         self._enemies.reset()
         self._hero.sprite.reset()
-        keys = key.get_pressed()
-        if keys[K_SPACE]:
-            return State.RUN
-        else:
-            self._draw_general_sprites(screen)
-            self._press_space.draw(screen)
-            return State.TITLE
+        self._draw_general_sprites(screen)
+        self._press_space.draw(screen)
+        return State.TITLE
 
     def run(self, screen):
         # update sprites
@@ -84,14 +80,10 @@ class Siege:
         return State.RUN
     
     def over(self, screen):
-        keys = key.get_pressed()
-        if keys[K_SPACE]:
-            return State.TITLE
-        else:
-            self._draw_general_sprites(screen)
-            self._game_over.draw(screen)
-            self._press_space.draw(screen)
-            return State.OVER
+        self._draw_general_sprites(screen)
+        self._game_over.draw(screen)
+        self._press_space.draw(screen)
+        return State.OVER
 
 
 if __name__ == "__main__":
@@ -106,6 +98,12 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    if state == State.TITLE:
+                        state = State.RUN
+                    elif state == State.OVER:
+                        state = State.TITLE
         
         screen.fill(BLUE_SKY)
 
