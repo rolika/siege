@@ -59,7 +59,6 @@ class Siege:
         self._hero.sprite.reset()
         self._draw_general_sprites(screen)
         self._press_space.draw(screen)
-        return State.TITLE
 
     def run(self, screen):
         # update sprites
@@ -84,7 +83,6 @@ class Siege:
         self._draw_general_sprites(screen)
         self._game_over.draw(screen)
         self._press_space.draw(screen)
-        return State.OVER
 
 
 if __name__ == "__main__":
@@ -109,13 +107,13 @@ if __name__ == "__main__":
         screen.fill(BLUE_SKY)
 
         if state == State.TITLE:
-            state = game.title(screen)
+            game.title(screen)
 
         if state == State.RUN:
             state = game.run(screen)
         
         if state == State.OVER:
-            state = game.over(screen)
+            game.over(screen)
 
         pygame.display.flip()
         clock.tick(60)
