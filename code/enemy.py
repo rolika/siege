@@ -55,7 +55,7 @@ class Enemy(sprite.Sprite):
 
     def _check_ladder(self):
         """We use enemy walking speed as a tolerance around the ladders vertical axis."""
-        return not self._falling and self.rect.clipline(self._ladder.rect.midtop, self._ladder.rect.midbottom)
+        return not self._falling and self.rect.colliderect(self._ladder)
 
     def update(self, *args, **kwargs) -> None:
         self.rect.x += self._speed[0]
