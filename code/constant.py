@@ -25,6 +25,8 @@ ROAD_HEIGHT = 70  # actually this is road width for human beings
 PLAYER_START_POS =(SCREEN_WIDTH // 2, BASTION_LEVEL + 30)
 PLAYER_STEP = 6
 PLAYER_STEP_HOLDING_BARREL = 4
+PLAYER_NUMBER_OF_FRAMES = 4
+PLAYER_IDLE_FRAME_COOLDOWN = 100
 
 BARREL_SPEED = 6
 BARREL_BONUS = 500  # if one barrel hits multiple enemies
