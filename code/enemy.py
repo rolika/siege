@@ -5,7 +5,7 @@ The attacker chooses the nearest ladder with the least other attackers already o
 
 from pygame import sprite, Surface
 import random
-from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_SCORE, ENEMY_SPAWN_DECREMENT, ENEMY_SPAWN_INTERVAL, ENEMY_SPEED_INCREMENT, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCORE_LIMIT, SCREEN_WIDTH
+from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_SCORE, ENEMY_SPAWN_DECREMENT, ENEMY_SPAWN_INTERVAL, ENEMY_SPEED_INCREMENT, ENEMY_WALKING_LEVEL, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCORE_LIMIT, SCREEN_WIDTH
 
 
 class Enemy(sprite.Sprite):
@@ -33,7 +33,7 @@ class Enemy(sprite.Sprite):
     
     @property
     def is_on_ground(self):
-        return self.rect.bottom == GROUND_LEVEL
+        return self.rect.bottom == ENEMY_WALKING_LEVEL
     
     @property
     def falling(self):
@@ -42,7 +42,7 @@ class Enemy(sprite.Sprite):
     def _spawn(self):
         direction = random.choice((-1, 1))  # -1: right side, 1: left side
         side = SCREEN_WIDTH if direction == -1 else 0
-        self.rect = self.image.get_rect(midbottom=(side, GROUND_LEVEL))
+        self.rect = self.image.get_rect(midbottom=(side, ENEMY_WALKING_LEVEL))
         self._speed = (Enemy.walking_speed*direction, 0)
 
     def _climb(self):
@@ -53,14 +53,15 @@ class Enemy(sprite.Sprite):
         self._falling = True
 
     def _check_ladder(self):
-        return not self._falling and self._ladder.rect.contains(self.rect)
+        under_ladder = self.rect.left >= self._ladder.rect.left and self.rect.right <= self._ladder.rect.right
+        return not self._falling and under_ladder
 
     def update(self, *args, **kwargs) -> None:
         self.rect.x += self._speed[0]
         self.rect.y += self._speed[1]
         if self._check_ladder():
             self._climb()
-        if self.rect.y >= GROUND_LEVEL:
+        if self.rect.y >= ENEMY_WALKING_LEVEL:
             self.kill()
 
 
