@@ -53,8 +53,7 @@ class Player(sprite.Sprite):
         self._idle_animation_cooldown -= 1
         if self._is_ready_to_change_idle_frame():
             self.image = self._idle[next(self._frame)]
-            self._last_idle_animation = time.get_ticks()
-            self._idle_animation_cooldown = PLAYER_IDLE_FRAME_COOLDOWN
+            self._reset_idle_animation_timer()
 
         if keys[K_RIGHT]:
             self.rect.x += PLAYER_STEP_HOLDING_BARREL if self._held_barrel.sprite else PLAYER_STEP
@@ -67,6 +66,10 @@ class Player(sprite.Sprite):
     
     def _is_ready_to_change_idle_frame(self):
         return time.get_ticks() - self._last_idle_animation >= self._idle_animation_cooldown
+    
+    def _reset_idle_animation_timer(self):
+        self._idle_animation_cooldown = PLAYER_IDLE_FRAME_COOLDOWN
+        self._last_idle_animation = time.get_ticks()
     
     def _constrain_movement(self):  # and pick up a new barrel
         if self.rect.left <= LEFT_TOWER:
@@ -93,8 +96,7 @@ class Player(sprite.Sprite):
     def reset(self):
         self.rect = self.image.get_rect(midbottom=PLAYER_START_POS)
         self._held_barrel.empty()
-        self._idle_animation_cooldown = PLAYER_IDLE_FRAME_COOLDOWN
-        self._last_idle_animation = time.get_ticks()
+        self._reset_idle_animation_timer()
     
     def update(self):
         self._get_input()
