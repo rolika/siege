@@ -17,7 +17,3 @@ class Ladders(sprite.Group):
         super().__init__()
         for n in range(LADDERS):
             self.add(Ladder(FIRST_LADDER_LEFT_POS + SPACE_BETWEEN_LADDERS*n))
-    
-    def least_populated(self, enemies):
-        ladders = list(self)
-        ladders.sort(key=lambda ladder: ladder.rect.collidelist(enemies))
