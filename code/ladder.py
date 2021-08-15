@@ -2,7 +2,7 @@
 
 
 from pygame import sprite, image
-from constant import FIRST_LADDER_LEFT_POS, GROUND_LEVEL, LADDERS, LADDER_HEIGHT, LADDER_WIDTH, SPACE_BETWEEN_LADDERS
+from constant import FIRST_LADDER_LEFT_POS, GROUND_LEVEL, LADDERS, SPACE_BETWEEN_LADDERS
 
 
 class Ladder(sprite.Sprite):
