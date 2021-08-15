@@ -5,15 +5,22 @@ When thrown away, the barrel starts to move downwards.
 If the barrel hits an enemy, the player gets scored. If the barrel hits he ground, it breaks."""
 
 
-from pygame import sprite, Surface
+import random
+from pygame import sprite, image
 from constant import BARREL_BONUS, GROUND_LEVEL, BARREL_SPEED
 
 
 class Barrel(sprite.Sprite):
+
+    barrel = image.load("gfx/barrel.png")
+    chair = image.load("gfx/chair.png")
+    rock = image.load("gfx/rock.png")
+    trove = image.load("gfx/trove.png")
+    throwables = (barrel, chair, rock, trove)
+
     def __init__(self, pos) -> None:
         super().__init__()
-        self.image = Surface((40, 20))
-        self.image.fill("brown")
+        self.image = random.choice(Barrel.throwables).convert_alpha()
         self.rect = self.image.get_rect(midbottom=pos)
         self._hit = 0
     

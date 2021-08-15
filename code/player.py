@@ -54,9 +54,10 @@ class Player(sprite.Sprite):
             self._can_throw = True
     
     def _pick_up_barrel(self):
-        self._barrel = Barrel(self.rect.midtop)
-        self._held_barrel.add(self._barrel)
-        self._can_throw = False
+        if not self._held_barrel:
+            self._barrel = Barrel(self.rect.midtop)
+            self._held_barrel.add(self._barrel)
+            self._can_throw = False
     
     def _throw_barrel(self):
         self._held_barrel.empty()
