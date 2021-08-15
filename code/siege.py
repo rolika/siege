@@ -54,6 +54,7 @@ class Siege:
         self._hero.sprite.thrown_barrels.draw(screen)
     
     def title(self, screen):
+        self._hiscore.update(self._hiscore_value)
         self._enemies.reset()
         self._hero.sprite.reset()
         self._draw_general_sprites(screen)
