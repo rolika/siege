@@ -1,6 +1,6 @@
 """In Siege!, enemies are coming in at ground level, from left or right.
-Once they reach the bastion, they start to climb up the walls. The wall is divided into 7 lanes.
-The attacker chooses the nearest ladder with the least other attackers already on it at spawn time."""
+Once they reach the bastion, they start to climb up the walls. The wall is divided into 6 lanes.
+The attacker randomly chooses a ladder."""
 
 
 from pygame import sprite, Surface
