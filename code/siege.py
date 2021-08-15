@@ -22,7 +22,8 @@ class Siege:
         self._restore_hiscore()
         left_tower = LeftTower()
         right_tower = RightTower()
-        self._scenery = sprite.Group(Sky(), Field(), Bastion(), left_tower, right_tower, Roof(left_tower.rect.midtop), Roof(right_tower.rect.midtop), Road())
+        self._scenery_behind_hero = sprite.Group(Sky(), Field(), left_tower, right_tower, Roof(left_tower.rect.midtop), Roof(right_tower.rect.midtop), Road())
+        self._scenery_before_hero = sprite.Group(Bastion())
         self._ladders = Ladders()
         self._enemies = Enemies(self._ladders)
         self._hero = sprite.GroupSingle(Player())
@@ -41,8 +42,9 @@ class Siege:
             hs["hiscore"] = self._hiscore_value
     
     def _draw_general_sprites(self, screen):
-        self._scenery.draw(screen)
+        self._scenery_behind_hero.draw(screen)
         self._hero.draw(screen)
+        self._scenery_before_hero.draw(screen)
         self._ladders.draw(screen)
         self._title.draw(screen)
         self._score.draw(screen)
