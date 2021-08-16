@@ -49,6 +49,7 @@ FIRST_LADDER_LEFT_POS = LEFT_TOWER + SPACE_BETWEEN_LADDERS // 2
 
 HISCORE_FILENAME = "hiscore"
 
+
 class State(enum.Enum):
     TITLE = enum.auto()
     RUN = enum.auto()
