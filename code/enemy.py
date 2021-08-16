@@ -3,10 +3,11 @@ Once they reach the bastion, they start to climb up the walls. The wall is divid
 The attacker randomly chooses a ladder."""
 
 
-from pygame import sprite, image, transform
+from pygame import sprite, image, time, transform
 import random
 from pathlib import Path
-from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_SCORE, ENEMY_SPAWN_DECREMENT, ENEMY_SPAWN_INTERVAL, ENEMY_SPEED_INCREMENT, ENEMY_WALKING_LEVEL, ENEMY_WALKING_SPEED, GROUND_LEVEL, SCORE_LIMIT, SCREEN_WIDTH
+from itertools import cycle
+from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_FRAME_COOLDOWN, ENEMY_NUMBER_OF_FRAMES, ENEMY_SCORE, ENEMY_SPAWN_DECREMENT, ENEMY_SPAWN_INTERVAL, ENEMY_SPEED_INCREMENT, ENEMY_WALKING_LEVEL, ENEMY_WALKING_SPEED, SCORE_LIMIT, SCREEN_WIDTH
 
 
 class Enemy(sprite.Sprite):
@@ -22,6 +23,7 @@ class Enemy(sprite.Sprite):
     def __init__(self, enemy_type, ladder) -> None:
         super().__init__()
         random.seed()
+        self._frame = cycle(range(ENEMY_NUMBER_OF_FRAMES))
         self._enemy_type = enemy_type
         self._ladder = ladder
         self._falling = False
@@ -40,13 +42,15 @@ class Enemy(sprite.Sprite):
         return self._falling
 
     def _spawn(self):
-        direction = random.choice((-1, 1))  # -1: right side, 1: left side
-        side = SCREEN_WIDTH if direction == -1 else 0
-        self.image = self._enemy_type[direction][0]
+        self._direction = random.choice((-1, 1))  # -1: right side, 1: left side
+        side = SCREEN_WIDTH if self._direction == -1 else 0
+        self.image = self._enemy_type[self._direction][0]
         self.rect = self.image.get_rect(midbottom=(side, ENEMY_WALKING_LEVEL))
-        self._speed = (Enemy.walking_speed*direction, 0)
+        self._speed = (Enemy.walking_speed*self._direction, 0)
+        self._reset_animation_timer()
 
     def _climb(self):
+        self._direction = 0
         self._speed = (0, Enemy.climbing_speed)
     
     def fall(self):
@@ -56,8 +60,21 @@ class Enemy(sprite.Sprite):
     def _check_ladder(self):
         """We use enemy walking speed as a tolerance around the ladders vertical axis."""
         return not self._falling and self.rect.colliderect(self._ladder)
+    
+    def _is_ready_to_change_idle_frame(self):
+        return time.get_ticks() - self._last_animation >= self._animation_cooldown
+    
+    def _reset_animation_timer(self):
+        self._animation_cooldown = ENEMY_FRAME_COOLDOWN
+        self._last_animation = time.get_ticks()
 
     def update(self, *args, **kwargs) -> None:
+        
+        self._animation_cooldown -= 1
+        if self._is_ready_to_change_idle_frame():
+            self.image = self._enemy_type[self._direction][next(self._frame)]
+            self._reset_animation_timer()
+
         self.rect.x += self._speed[0]
         self.rect.y += self._speed[1]
         if self._check_ladder():
@@ -99,23 +116,24 @@ class Enemies(sprite.Group):
         enemy names: [
             [idle phases], <- used for climbing and falling
             [run left phases], <- enemy direction: 1
-            [run right phases] <- enemy direction: -1 [:-1]
+            [run right phases] <- enemy direction: -1 [-1]
         ]"""
         p = Path("gfx/enemies/")
         for png in p.iterdir():  # itemdir yields in arbitrary order
-            props = png.name.rstrip(".png").split("_")  # 0: enemy name, 2: run or idle, 3: phase
-            phases = [None, None, None, None]
-            self._enemy_types[props[0]] = [phases, phases, phases]
+            props = png.name.rstrip(".png").split("_")  # 0: enemy name, 2: run or climb, 3: phase
+            self._enemy_types[props[0]] = [[None, None, None, None], [None, None, None, None], [None, None, None, None]]  # 0: climb, 1: run right, 2: run left 
+
+        # populate the frame lists
         for png in p.iterdir():
             img = image.load(png)  # source images face right, so they come from the left
             img = transform.scale2x(img)
-            props = png.name.rstrip(".png").split("_")  # 0: enemy name, 2: run or idle, 3: phase
-            direction = 1 if props[2] == "run" else 0
+            props = png.name.rstrip(".png").split("_")  # 0: enemy name, 2: run or climb, 3: frame
+            direction = 1 if props[1] == "run" else 0
             i = int(props[3][-1])  # the ending number of f0-3 -> index in the phases list
             self._enemy_types[props[0]][direction][i] = img.convert_alpha()
             if direction:  # flip only the run phases
                 img = transform.flip(img, True, False)
-                self._enemy_types[props[0]][-1][i] = img.convert_alpha()
+                self._enemy_types[props[0]][2][i] = img.convert_alpha()
 
     def _reset_timer(self):
         self._spawn_interval = random.randint(*Enemies.spawn_interval)
