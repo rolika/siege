@@ -5,7 +5,7 @@ Code is loosely based on ClearCode's Space Invaders tutorial found here: https:/
 
 
 import pygame
-from pygame import sprite, key
+from pygame import sprite, freetype  # import freetype to initialize it
 from pygame.locals import *
 import sys
 import shelve
@@ -27,11 +27,11 @@ class Siege:
         self._ladders = Ladders()
         self._enemies = Enemies(self._ladders)
         self._hero = sprite.GroupSingle(Player())
-        self._title = sprite.GroupSingle(Text("Siege!", "font/RubikMonoOne-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH//2, 0)))
-        self._score = sprite.GroupSingle(Score("font/Monofett-Regular.ttf", 24, "darkslategrey", (0, 0)))
-        self._hiscore = sprite.GroupSingle(HiScore("font/Monofett-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH, 0)))
-        self._game_over = sprite.GroupSingle(Text("Game Over", "font/RubikMonoOne-Regular.ttf", 40, "darkslategrey", (SCREEN_WIDTH//2, GROUND_LEVEL - BASTION_HEIGHT//2)))
-        self._press_space = sprite.GroupSingle(Text("Press space!", "font/RubikMonoOne-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH//2, GROUND_LEVEL+10)))
+        self._title = sprite.GroupSingle(Text("Siege!", "font/MedievalSharp-Regular.ttf", 48, "black", (SCREEN_WIDTH//2, 0)))
+        self._score = sprite.GroupSingle(Score("font/Monofett-Regular.ttf", 24, "black", (0, 0)))
+        self._hiscore = sprite.GroupSingle(HiScore("font/Monofett-Regular.ttf", 24, "black", (SCREEN_WIDTH, 0)))
+        self._game_over = sprite.GroupSingle(Text("Game Over", "font/MedievalSharp-Regular.ttf", 48, "black", (SCREEN_WIDTH//2, GROUND_LEVEL - BASTION_HEIGHT//2)))
+        self._press_space = sprite.GroupSingle(Text("Press space!", "font/MedievalSharp-Regular.ttf", 32, "black", (SCREEN_WIDTH//2, GROUND_LEVEL+10)))
     
     def _restore_hiscore(self):
         with shelve.open(HISCORE_FILENAME) as hs:
