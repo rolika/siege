@@ -5,7 +5,7 @@ Code is loosely based on ClearCode's Space Invaders tutorial found here: https:/
 
 
 import pygame
-from pygame import sprite, key
+from pygame import sprite, freetype  # import freetype to initialize it
 from pygame.locals import *
 import sys
 import shelve
@@ -22,15 +22,16 @@ class Siege:
         self._restore_hiscore()
         left_tower = LeftTower()
         right_tower = RightTower()
-        self._scenery = sprite.Group(Sky(), Field(), Bastion(), left_tower, right_tower, Roof(left_tower.rect.midtop), Roof(right_tower.rect.midtop), Road())
+        self._scenery_behind_hero = sprite.Group(Sky(), Field(), left_tower, right_tower, Roof(left_tower.rect.midtop), Roof(right_tower.rect.midtop), Road())
+        self._scenery_before_hero = sprite.Group(Bastion())
         self._ladders = Ladders()
         self._enemies = Enemies(self._ladders)
         self._hero = sprite.GroupSingle(Player())
-        self._title = sprite.GroupSingle(Text("Siege!", "font/RubikMonoOne-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH//2, 0)))
-        self._score = sprite.GroupSingle(Score("font/Monofett-Regular.ttf", 24, "darkslategrey", (0, 0)))
-        self._hiscore = sprite.GroupSingle(HiScore("font/Monofett-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH, 0)))
-        self._game_over = sprite.GroupSingle(Text("Game Over", "font/RubikMonoOne-Regular.ttf", 40, "darkslategrey", (SCREEN_WIDTH//2, GROUND_LEVEL - BASTION_HEIGHT//2)))
-        self._press_space = sprite.GroupSingle(Text("Press space!", "font/RubikMonoOne-Regular.ttf", 24, "darkslategrey", (SCREEN_WIDTH//2, GROUND_LEVEL+10)))
+        self._title = sprite.GroupSingle(Text("Siege!", "font/MedievalSharp-Regular.ttf", 48, "black", (SCREEN_WIDTH//2, 0)))
+        self._score = sprite.GroupSingle(Score("font/Monofett-Regular.ttf", 24, "black", (0, 0)))
+        self._hiscore = sprite.GroupSingle(HiScore("font/Monofett-Regular.ttf", 24, "black", (SCREEN_WIDTH, 0)))
+        self._game_over = sprite.GroupSingle(Text("Game Over", "font/MedievalSharp-Regular.ttf", 48, "black", (SCREEN_WIDTH//2, GROUND_LEVEL - BASTION_HEIGHT//2)))
+        self._press_space = sprite.GroupSingle(Text("Press space!", "font/MedievalSharp-Regular.ttf", 32, "black", (SCREEN_WIDTH//2, GROUND_LEVEL+10)))
     
     def _restore_hiscore(self):
         with shelve.open(HISCORE_FILENAME) as hs:
@@ -41,8 +42,9 @@ class Siege:
             hs["hiscore"] = self._hiscore_value
     
     def _draw_general_sprites(self, screen):
-        self._scenery.draw(screen)
+        self._scenery_behind_hero.draw(screen)
         self._hero.draw(screen)
+        self._scenery_before_hero.draw(screen)
         self._ladders.draw(screen)
         self._title.draw(screen)
         self._score.draw(screen)
@@ -54,11 +56,11 @@ class Siege:
         self._hero.sprite.thrown_barrels.draw(screen)
     
     def title(self, screen):
+        self._hiscore.update(self._hiscore_value)
         self._enemies.reset()
         self._hero.sprite.reset()
         self._draw_general_sprites(screen)
         self._press_space.draw(screen)
-        return State.TITLE
 
     def run(self, screen):
         # update sprites
@@ -83,7 +85,6 @@ class Siege:
         self._draw_general_sprites(screen)
         self._game_over.draw(screen)
         self._press_space.draw(screen)
-        return State.OVER
 
 
 if __name__ == "__main__":
@@ -108,13 +109,13 @@ if __name__ == "__main__":
         screen.fill(BLUE_SKY)
 
         if state == State.TITLE:
-            state = game.title(screen)
+            game.title(screen)
 
         if state == State.RUN:
             state = game.run(screen)
         
         if state == State.OVER:
-            state = game.over(screen)
+            game.over(screen)
 
         pygame.display.flip()
         clock.tick(60)
