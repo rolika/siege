@@ -11,7 +11,7 @@ class Text(sprite.Sprite):
         self._fonttype = freetype.Font(fontname, size)
         self._color = color
         self.rect = self.image.get_rect(midtop=pos)
-    
+
     @property
     def image(self):
         return self._fonttype.render(self._text, self._color)[0]
@@ -24,7 +24,7 @@ class Score(sprite.Sprite):
         self._fonttype = freetype.Font(fontname, size)
         self._color = color
         self.rect = self.image.get_rect(topleft=pos)
-    
+
     @property
     def image(self):
         return self._fonttype.render(self._text, self._color)[0]
@@ -40,7 +40,7 @@ class HiScore(sprite.Sprite):
         self._fonttype = freetype.Font(fontname, size)
         self._color = color
         self.rect = self.image.get_rect(topright=pos)
-    
+
     @property
     def image(self):
         return self._fonttype.render(self._text, self._color)[0]

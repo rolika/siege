@@ -7,7 +7,9 @@ from pygame import sprite, image, time, transform
 import random
 from pathlib import Path
 from itertools import cycle
-from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_FRAME_COOLDOWN, ENEMY_NUMBER_OF_FRAMES, ENEMY_SCORE, ENEMY_SPAWN_DECREMENT, ENEMY_SPAWN_INTERVAL, ENEMY_SPEED_INCREMENT, ENEMY_WALKING_LEVEL, ENEMY_WALKING_SPEED, SCORE_LIMIT, SCREEN_WIDTH
+from constant import BASTION_LEVEL, ENEMY_CLIMBING_SPEED, ENEMY_FALLING_SPEED, ENEMY_FRAME_COOLDOWN,\
+                     ENEMY_NUMBER_OF_FRAMES, ENEMY_SCORE, ENEMY_SPAWN_DECREMENT, ENEMY_SPAWN_INTERVAL,\
+                     ENEMY_SPEED_INCREMENT, ENEMY_WALKING_LEVEL, ENEMY_WALKING_SPEED, SCORE_LIMIT, SCREEN_WIDTH
 
 
 class Enemy(sprite.Sprite):
@@ -15,7 +17,7 @@ class Enemy(sprite.Sprite):
     # class variables & methods
     walking_speed = ENEMY_WALKING_SPEED
     climbing_speed = ENEMY_CLIMBING_SPEED
-    
+
     def increase_speed():
         Enemy.walking_speed += ENEMY_SPEED_INCREMENT
         Enemy.climbing_speed -= ENEMY_SPEED_INCREMENT
@@ -28,15 +30,15 @@ class Enemy(sprite.Sprite):
         self._ladder = ladder
         self._falling = False
         self._spawn()
-    
+
     @property
     def is_above_bastion(self):
         return self.rect.centery < BASTION_LEVEL
-    
+
     @property
     def is_on_ground(self):
         return self.rect.bottom == ENEMY_WALKING_LEVEL
-    
+
     @property
     def falling(self):
         return self._falling
@@ -52,7 +54,7 @@ class Enemy(sprite.Sprite):
     def _climb(self):
         self._direction = 0
         self._speed = (0, Enemy.climbing_speed)
-    
+
     def fall(self):
         self._speed = (0, ENEMY_FALLING_SPEED)
         self._falling = True
@@ -60,16 +62,16 @@ class Enemy(sprite.Sprite):
     def _check_ladder(self):
         """We use enemy walking speed as a tolerance around the ladders vertical axis."""
         return not self._falling and self.rect.colliderect(self._ladder)
-    
+
     def _is_ready_to_change_idle_frame(self):
         return time.get_ticks() - self._last_animation >= self._animation_cooldown
-    
+
     def _reset_animation_timer(self):
         self._animation_cooldown = ENEMY_FRAME_COOLDOWN
         self._last_animation = time.get_ticks()
 
     def update(self, *args, **kwargs) -> None:
-        
+
         self._animation_cooldown -= 1
         if self._is_ready_to_change_idle_frame():
             self.image = self._enemy_type[self._direction][next(self._frame)]
@@ -88,11 +90,11 @@ class Enemies(sprite.Group):
 
     # class variables & methods
     spawn_interval = ENEMY_SPAWN_INTERVAL
-    
+
     def decrement_spawn_interval():
         Enemies.spawn_interval[0] -= ENEMY_SPAWN_DECREMENT
         Enemies.spawn_interval[1] -= ENEMY_SPAWN_DECREMENT
-    
+
     def __init__(self, ladders) -> None:
         super().__init__()
         self._ladders = tuple(ladders)
@@ -102,11 +104,11 @@ class Enemies(sprite.Group):
         self._level = 1
         self._enemy_types = dict()
         self._prep_animations()
-    
+
     @property
     def conquer(self):
         return any([enemy.is_above_bastion for enemy in self.sprites()])
-    
+
     @property
     def score(self):
         return self._score
@@ -121,7 +123,8 @@ class Enemies(sprite.Group):
         p = Path("gfx/enemies/")
         for png in p.iterdir():  # itemdir yields in arbitrary order
             props = png.name.rstrip(".png").split("_")  # 0: enemy name, 2: run or climb, 3: phase
-            self._enemy_types[props[0]] = [[None, None, None, None], [None, None, None, None], [None, None, None, None]]  # 0: climb, 1: run right, 2: run left 
+            # frame lists: 0: climb, 1: run right, 2: run left
+            self._enemy_types[props[0]] = [[None, None, None, None], [None, None, None, None], [None, None, None, None]]
 
         # populate the frame lists
         for png in p.iterdir():
@@ -140,16 +143,16 @@ class Enemies(sprite.Group):
 
     def _ladder(self):
         return random.choice(self._ladders)
-    
+
     def _enemy_name(self):
         return random.choice(list(self._enemy_types))
-    
+
     def _spawn(self):
         self._spawn_interval -= 1
         if self._spawn_interval <= 0:
             self.add(Enemy(self._enemy_types[self._enemy_name()], self._ladder()))
             self._reset_timer()
-    
+
     def _check_barrels(self, barrels):
         for barrel, enemies in sprite.groupcollide(barrels, self, False, False).items():
             for enemy in enemies:
@@ -159,13 +162,13 @@ class Enemies(sprite.Group):
                         self._score += ENEMY_SCORE  # bonus for hitting an enemy on ground level
                     barrel.hit()
                     enemy.fall()
-    
+
     def _challenge(self):
         if self._score >= self._level_limit and self._level == self._level_limit / SCORE_LIMIT:
             Enemies.decrement_spawn_interval()
             self._level += 1
             self._level_limit += SCORE_LIMIT
-    
+
     def reset(self):
         self._score = 0
         self.empty()

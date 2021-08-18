@@ -30,14 +30,14 @@ class Barrel(sprite.Sprite):
         self.image = random.choice(Barrel.throwables).convert_alpha()
         self.rect = self.image.get_rect(midbottom=pos)
         self._hit = 0
-    
+
     @property
     def bonus(self):
         return self._hit * BARREL_BONUS
-    
+
     def hit(self):
         self._hit += 1
-    
+
     def update(self, *args, **kwargs) -> None:
         player_pos = kwargs.get("player_pos", None)
         if player_pos:  # move along with the player
