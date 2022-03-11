@@ -5,7 +5,7 @@ Code is loosely based on ClearCode's Space Invaders tutorial found here: https:/
 
 
 import pygame
-from pygame import sprite, freetype  # import freetype to initialize it
+from pygame import sprite, freetype, mixer  # import freetype to initialize it
 from pygame.locals import *
 import sys
 import shelve
@@ -20,7 +20,6 @@ from constant import BASTION_HEIGHT, GROUND_LEVEL, HISCORE_FILENAME, SCREEN_SIZE
 
 class Siege:
     def __init__(self):
-        random.seed()
         self._restore_hiscore()
         left_tower = LeftTower()
         right_tower = RightTower()
@@ -38,6 +37,9 @@ class Siege:
                                                   (SCREEN_WIDTH//2, GROUND_LEVEL - BASTION_HEIGHT//2)))
         self._press_space = sprite.GroupSingle(Text("Press space!", "font/MedievalSharp-Regular.ttf", 32, "black",
                                                     (SCREEN_WIDTH//2, GROUND_LEVEL+10)))
+        pygame.mixer.music.fadeout(100)
+        pygame.mixer.music.load("sfx/bgm_play.wav")
+        pygame.mixer.music.play(loops=-1)
 
     def _restore_hiscore(self):
         with shelve.open(HISCORE_FILENAME) as hs:
@@ -94,9 +96,12 @@ class Siege:
 
 
 if __name__ == "__main__":
+    random.seed()
     pygame.init()
+    mixer.set_num_channels(64)
     screen = pygame.display.set_mode(SCREEN_SIZE)
     clock = pygame.time.Clock()
+    pygame.display.set_caption("Siege")
     game = Siege()
     state = State.TITLE
 
