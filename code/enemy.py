@@ -89,7 +89,11 @@ class Enemy(sprite.Sprite):
 class Enemies(sprite.Group):
 
     # class variables & methods
-    spawn_interval = ENEMY_SPAWN_INTERVAL
+
+    spawn_interval = ENEMY_SPAWN_INTERVAL[:]
+
+    def reset_spawn_interval():
+        Enemies.spawn_interval = ENEMY_SPAWN_INTERVAL[:]  # create a new list, not just a reference
 
     def decrement_spawn_interval():
         Enemies.spawn_interval[0] -= ENEMY_SPAWN_DECREMENT
@@ -104,6 +108,7 @@ class Enemies(sprite.Group):
         self._level = 1
         self._enemy_types = dict()
         self._prep_animations()
+        Enemies.reset_spawn_interval()
 
     @property
     def conquer(self):
@@ -172,6 +177,7 @@ class Enemies(sprite.Group):
     def reset(self):
         self._score = 0
         self.empty()
+        Enemies.reset_spawn_interval()
 
     def update(self, barrels):
         self._check_barrels(barrels)
