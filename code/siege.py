@@ -9,6 +9,7 @@ from pygame import sprite, freetype  # import freetype to initialize it
 from pygame.locals import *
 import sys
 import shelve
+import random
 from player import Player
 from scenery import Sky, Field, Bastion, Roof, LeftTower, RightTower, Road
 from enemy import Enemies
@@ -19,6 +20,7 @@ from constant import BASTION_HEIGHT, GROUND_LEVEL, HISCORE_FILENAME, SCREEN_SIZE
 
 class Siege:
     def __init__(self):
+        random.seed()
         self._restore_hiscore()
         left_tower = LeftTower()
         right_tower = RightTower()
