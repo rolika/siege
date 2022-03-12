@@ -5,7 +5,7 @@ Code is loosely based on ClearCode's Space Invaders tutorial found here: https:/
 
 
 import pygame
-from pygame import sprite, freetype  # import freetype to initialize it
+from pygame import sprite, freetype, mixer  # import freetype to initialize it
 from pygame.locals import *
 import sys
 import shelve
@@ -20,7 +20,6 @@ from constant import BASTION_HEIGHT, GROUND_LEVEL, HISCORE_FILENAME, SCREEN_SIZE
 
 class Siege:
     def __init__(self):
-        random.seed()
         self._restore_hiscore()
         left_tower = LeftTower()
         right_tower = RightTower()
@@ -79,6 +78,9 @@ class Siege:
 
         if self._enemies.conquer:
             self._save_hiscore()
+            pygame.mixer.music.fadeout(1000)
+            pygame.mixer.music.load("sfx/bgm_over.wav")
+            pygame.mixer.music.play(loops=-1)
             return State.OVER
 
         # draw sprites
@@ -94,11 +96,16 @@ class Siege:
 
 
 if __name__ == "__main__":
+    random.seed()
     pygame.init()
+    mixer.set_num_channels(64)
     screen = pygame.display.set_mode(SCREEN_SIZE)
     clock = pygame.time.Clock()
+    pygame.display.set_caption("Siege")
     game = Siege()
     state = State.TITLE
+    pygame.mixer.music.load("sfx/bgm_title.wav")
+    pygame.mixer.music.play(loops=-1)
 
     while True:
         for event in pygame.event.get():
@@ -108,8 +115,14 @@ if __name__ == "__main__":
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
                     if state == State.TITLE:
+                        pygame.mixer.music.fadeout(1000)
+                        pygame.mixer.music.load("sfx/bgm_play.wav")
+                        pygame.mixer.music.play(loops=-1)
                         state = State.RUN
                     elif state == State.OVER:
+                        pygame.mixer.music.fadeout(1000)
+                        pygame.mixer.music.load("sfx/bgm_title.wav")
+                        pygame.mixer.music.play(loops=-1)
                         state = State.TITLE
 
         screen.fill(BLUE_SKY)

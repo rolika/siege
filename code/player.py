@@ -5,7 +5,7 @@
 - can throw barrels downwards at its enemies, again, one at a time"""
 
 
-from pygame import sprite, image, key, transform, time  # this way, IntelliSense works in VS Code
+from pygame import sprite, image, key, transform, time, mixer  # this way, IntelliSense works in VS Code
 from pygame.locals import *
 from itertools import cycle
 from barrel import Barrel
@@ -23,6 +23,13 @@ class Player(sprite.Sprite):
         self._can_throw = True
         self._held_barrel = sprite.GroupSingle()
         self._thrown_barrels = sprite.Group()
+
+        self._pickup_sfx = mixer.Sound("sfx/pickup.wav")
+        self._pickup_sfx.set_volume(0.25)
+        self._attack_sfx = mixer.Sound("sfx/attack.wav")
+        self._attack_sfx.set_volume(0.25)
+        self._run_sfx = mixer.Sound("sfx/run.wav")
+        self._run_sfx.set_volume(0.8)
 
         self.reset()
 
@@ -59,9 +66,11 @@ class Player(sprite.Sprite):
         if keys[K_RIGHT]:
             self.rect.x += PLAYER_STEP_HOLDING_BARREL if self._held_barrel.sprite else PLAYER_STEP
             self.image = self._run_right[next(self._frame)]
+            self._run_sfx.play()
         elif keys[K_LEFT]:
             self.rect.x -= PLAYER_STEP_HOLDING_BARREL if self._held_barrel.sprite else PLAYER_STEP
             self.image = self._run_left[next(self._frame)]
+            self._run_sfx.play()
         if keys[K_SPACE] and self._held_barrel.sprite and self._can_throw:
             self._throw_barrel()
 
@@ -89,10 +98,12 @@ class Player(sprite.Sprite):
             self._barrel = Barrel(self.rect.midtop)
             self._held_barrel.add(self._barrel)
             self._can_throw = False
+            self._pickup_sfx.play()
 
     def _throw_barrel(self):
         self._held_barrel.empty()
         self._thrown_barrels.add(self._barrel)
+        self._attack_sfx.play()
 
     def reset(self):
         self.rect = self.image.get_rect(midbottom=PLAYER_START_POS)
