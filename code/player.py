@@ -108,6 +108,7 @@ class Player(sprite.Sprite):
     def reset(self):
         self.rect = self.image.get_rect(midbottom=PLAYER_START_POS)
         self._held_barrel.empty()
+        self._thrown_barrels.empty()
         self._reset_idle_animation_timer()
 
     def update(self):
