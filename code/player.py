@@ -29,7 +29,7 @@ class Player(sprite.Sprite):
         self._attack_sfx = mixer.Sound("sfx/attack.wav")
         self._attack_sfx.set_volume(0.25)
         self._run_sfx = mixer.Sound("sfx/run.wav")
-        self._run_sfx.set_volume(0.8)
+        self._run_sfx.set_volume(0.25)
 
         self.reset()
 

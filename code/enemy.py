@@ -101,7 +101,7 @@ class Enemies(sprite.Group):
 
     def decrement_spawn_interval():
         Enemies.spawn_interval[0] -= ENEMY_SPAWN_DECREMENT
-        Enemies.spawn_interval[1] -= ENEMY_SPAWN_DECREMENT
+        Enemies.spawn_interval[1] -= ENEMY_SPAWN_DECREMENT // 2
 
     def __init__(self, ladders) -> None:
         super().__init__()
