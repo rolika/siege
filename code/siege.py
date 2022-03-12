@@ -37,9 +37,6 @@ class Siege:
                                                   (SCREEN_WIDTH//2, GROUND_LEVEL - BASTION_HEIGHT//2)))
         self._press_space = sprite.GroupSingle(Text("Press space!", "font/MedievalSharp-Regular.ttf", 32, "black",
                                                     (SCREEN_WIDTH//2, GROUND_LEVEL+10)))
-        pygame.mixer.music.fadeout(100)
-        pygame.mixer.music.load("sfx/bgm_play.wav")
-        pygame.mixer.music.play(loops=-1)
 
     def _restore_hiscore(self):
         with shelve.open(HISCORE_FILENAME) as hs:
@@ -81,6 +78,9 @@ class Siege:
 
         if self._enemies.conquer:
             self._save_hiscore()
+            pygame.mixer.music.fadeout(1000)
+            pygame.mixer.music.load("sfx/bgm_over.wav")
+            pygame.mixer.music.play(loops=-1)
             return State.OVER
 
         # draw sprites
@@ -104,6 +104,8 @@ if __name__ == "__main__":
     pygame.display.set_caption("Siege")
     game = Siege()
     state = State.TITLE
+    pygame.mixer.music.load("sfx/bgm_title.wav")
+    pygame.mixer.music.play(loops=-1)
 
     while True:
         for event in pygame.event.get():
@@ -113,8 +115,14 @@ if __name__ == "__main__":
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
                     if state == State.TITLE:
+                        pygame.mixer.music.fadeout(1000)
+                        pygame.mixer.music.load("sfx/bgm_play.wav")
+                        pygame.mixer.music.play(loops=-1)
                         state = State.RUN
                     elif state == State.OVER:
+                        pygame.mixer.music.fadeout(1000)
+                        pygame.mixer.music.load("sfx/bgm_title.wav")
+                        pygame.mixer.music.play(loops=-1)
                         state = State.TITLE
 
         screen.fill(BLUE_SKY)
