@@ -3,7 +3,7 @@ Once they reach the bastion, they start to climb up the walls. The wall is divid
 The attacker randomly chooses a ladder."""
 
 
-from pygame import sprite, image, time, transform
+from pygame import sprite, image, time, transform, mixer
 import random
 from pathlib import Path
 from itertools import cycle
@@ -30,6 +30,9 @@ class Enemy(sprite.Sprite):
         self._ladder = ladder
         self._falling = False
         self._spawn()
+
+        self._land_sfx = mixer.Sound("sfx/land.wav")
+        self._land_sfx.set_volume(0.8)
 
     @property
     def is_above_bastion(self):
@@ -84,6 +87,7 @@ class Enemy(sprite.Sprite):
             self._climb()
         if self.rect.y >= ENEMY_WALKING_LEVEL:
             self.kill()
+            self._land_sfx.play()
 
 
 class Enemies(sprite.Group):
@@ -109,6 +113,9 @@ class Enemies(sprite.Group):
         self._enemy_types = dict()
         self._prep_animations()
         Enemies.reset_spawn_interval()
+
+        self._hit_sfx = mixer.Sound("sfx/hit.wav")
+        self._hit_sfx.set_volume(0.25)
 
     @property
     def conquer(self):
@@ -166,6 +173,7 @@ class Enemies(sprite.Group):
                     if enemy.is_on_ground:
                         self._score += ENEMY_SCORE  # bonus for hitting an enemy on ground level
                     barrel.hit()
+                    self._hit_sfx.play()
                     enemy.fall()
 
     def _challenge(self):
