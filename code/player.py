@@ -28,6 +28,8 @@ class Player(sprite.Sprite):
         self._pickup_sfx.set_volume(0.25)
         self._attack_sfx = mixer.Sound("sfx/attack.wav")
         self._attack_sfx.set_volume(0.25)
+        self._run_sfx = mixer.Sound("sfx/run.wav")
+        self._run_sfx.set_volume(0.8)
 
         self.reset()
 
@@ -64,9 +66,11 @@ class Player(sprite.Sprite):
         if keys[K_RIGHT]:
             self.rect.x += PLAYER_STEP_HOLDING_BARREL if self._held_barrel.sprite else PLAYER_STEP
             self.image = self._run_right[next(self._frame)]
+            self._run_sfx.play()
         elif keys[K_LEFT]:
             self.rect.x -= PLAYER_STEP_HOLDING_BARREL if self._held_barrel.sprite else PLAYER_STEP
             self.image = self._run_left[next(self._frame)]
+            self._run_sfx.play()
         if keys[K_SPACE] and self._held_barrel.sprite and self._can_throw:
             self._throw_barrel()
 

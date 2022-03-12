@@ -63,7 +63,7 @@ class Enemy(sprite.Sprite):
         self._falling = True
 
     def _check_ladder(self):
-        """We use enemy walking speed as a tolerance around the ladders vertical axis."""
+        """Use enemy walking speed as a tolerance around the ladders vertical axis."""
         return not self._falling and self.rect.colliderect(self._ladder)
 
     def _is_ready_to_change_idle_frame(self):
