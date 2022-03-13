@@ -100,8 +100,8 @@ class Enemies(sprite.Group):
         Enemies.spawn_interval = ENEMY_SPAWN_INTERVAL[:]  # create a new list, not just a reference
 
     def decrement_spawn_interval():
-        Enemies.spawn_interval[0] -= ENEMY_SPAWN_DECREMENT
-        Enemies.spawn_interval[1] -= ENEMY_SPAWN_DECREMENT // 2
+        Enemies.spawn_interval[0] -= ENEMY_SPAWN_DECREMENT // 2
+        Enemies.spawn_interval[1] -= ENEMY_SPAWN_DECREMENT
 
     def __init__(self, ladders) -> None:
         super().__init__()
